@@ -12,70 +12,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout student code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Java 17
+      - name: Setup Java
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Compile Java Program
-        run: |
-          javac src/BrewSizeAdvisor.java
+      - name: Compile
+        run: javac src/BrewSizeAdvisor.java
 
-      # ---------- TEST CASE 1 (10 POINTS) ----------
-      - name: Test Case 1 - Medium (220)
-        id: tc1
+      - name: Run All Test Cases
         run: |
-          output=$(echo 220 | java -cp src BrewSizeAdvisor)
-          if [ "$output" = "Medium" ]; then
-            echo "score=10" >> $GITHUB_OUTPUT
-          else
-            echo "score=0" >> $GITHUB_OUTPUT
-          fi
+          score=0
 
-      # ---------- TEST CASE 2 (10 POINTS) ----------
-      - name: Test Case 2 - Large (400)
-        id: tc2
-        run: |
-          output=$(echo 400 | java -cp src BrewSizeAdvisor)
-          if [ "$output" = "Large" ]; then
-            echo "score=10" >> $GITHUB_OUTPUT
-          else
-            echo "score=0" >> $GITHUB_OUTPUT
-          fi
+          test() {
+            input=$1
+            expected=$2
+            output=$(echo "$input" | java -cp src BrewSizeAdvisor)
 
-      # ---------- TEST CASE 3 (10 POINTS) ----------
-      - name: Test Case 3 - Small (150)
-        id: tc3
-        run: |
-          output=$(echo 150 | java -cp src BrewSizeAdvisor)
-          if [ "$output" = "Small" ]; then
-            echo "score=10" >> $GITHUB_OUTPUT
-          else
-            echo "score=0" >> $GITHUB_OUTPUT
-          fi
+            if [ "$output" = "$expected" ]; then
+              echo "PASS: Input=$input Output=$output"
+              score=$((score+10))
+            else
+              echo "FAIL: Input=$input Expected=$expected Got=$output"
+              exit 1
+            fi
+          }
 
-      # ---------- TEST CASE 4 (10 POINTS) ----------
-      - name: Test Case 4 - Boundary (200)
-        id: tc4
-        run: |
-          output=$(echo 200 | java -cp src BrewSizeAdvisor)
-          if [ "$output" = "Medium" ]; then
-            echo "score=10" >> $GITHUB_OUTPUT
-          else
-            echo "score=0" >> $GITHUB_OUTPUT
-          fi
+          test 220 Medium
+          test 400 Large
+          test 150 Small
+          test 200 Medium
+          test 350 Medium
 
-      # ---------- TEST CASE 5 (10 POINTS) ----------
-      - name: Test Case 5 - Boundary (350)
-        id: tc5
-        run: |
-          output=$(echo 350 | java -cp src BrewSizeAdvisor)
-          if [ "$output" = "Medium" ]; then
-            echo "score=10" >> $GITHUB_OUTPUT
-          else
-            echo "score=0" >> $GITHUB_OUTPUT
-          fi
+          echo "🎯 TOTAL SCORE: $score / 50"
