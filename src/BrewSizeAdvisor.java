@@ -6,7 +6,7 @@ public class BrewSizeAdvisor {
 
         Scanner sc = new Scanner(System.in);
 
-        int volume = sc.next();
+        float volume = sc.nextFloat();
         
         if(volume<200){
             System.out.println("Small");
