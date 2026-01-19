@@ -15,7 +15,7 @@ public class BrewSizeAdvisor {
         else if((volume>=200)&&(volume<=350)){
             System.out.println("Medium");
         }
-        else if (volume <0){
+        else if (volume<0){
             System.out.println("Enter positive integer");
         }else{
             System.out.println("Large");
